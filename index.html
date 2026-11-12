@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Telecomando</title>
+<meta name="theme-color" content="#1B2533">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icon-180.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Telecomando">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#E9ECEF; --body:#FFFFFF; --ink:#1B2533; --muted:#5B6675;
+  --key:#F2C14E; --keyInk:#1B2533; --edge:#CBD2DA; --led:#2FB36B;
+  color-scheme:light; box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#10161F; --body:#1B2533; --ink:#EEF1F4; --muted:#9AA5B3; --edge:#2C394B; --led:#3DDC84;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#10161F; --body:#1B2533; --ink:#EEF1F4; --muted:#9AA5B3; --edge:#2C394B; --led:#3DDC84;
+  color-scheme:dark;
+}
+*,*::before,*::after{box-sizing:inherit}
+html,body{height:100%;margin:0}
+body{
+  background:var(--bg); color:var(--ink);
+  font-family:"Bricolage Grotesque",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  display:flex; align-items:center; justify-content:center; padding:20px;
+}
+.remote{
+  width:100%; max-width:360px; background:var(--body);
+  border:1px solid var(--edge); border-radius:44px 44px 64px 64px;
+  padding:28px 24px 36px; display:flex; flex-direction:column; gap:24px;
+}
+.top{display:flex; justify-content:space-between; align-items:center}
+.led{width:10px;height:10px;border-radius:50%;background:var(--led);box-shadow:0 0 0 4px color-mix(in srgb,var(--led) 20%,transparent)}
+.clock{font-variant-numeric:tabular-nums; font-weight:600}
+.pad{display:grid; grid-template-columns:1fr 1fr; gap:18px 16px}
+.k{display:flex; flex-direction:column; align-items:center; gap:8px; text-decoration:none; color:var(--ink); -webkit-tap-highlight-color:transparent}
+.btn{
+  display:grid; place-items:center; width:100%; aspect-ratio:1;
+  background:var(--key); color:var(--keyInk); border-radius:30px;
+  font-weight:800; font-size:clamp(4rem,22vw,5.5rem); line-height:1;
+  box-shadow:0 8px 0 color-mix(in srgb,var(--key) 55%,#000);
+  transition:transform .08s, box-shadow .08s;
+}
+.btn.word{font-size:clamp(2.4rem,13vw,3.2rem)}
+.k:active .btn{transform:translateY(6px); box-shadow:0 2px 0 color-mix(in srgb,var(--key) 55%,#000)}
+.k:focus-visible{outline:none}
+.k:focus-visible .btn{outline:3px solid var(--ink); outline-offset:4px}
+.lbl{font-size:.95rem; font-weight:600; color:var(--muted)}
+@media (prefers-reduced-motion: reduce){.btn{transition:none}}
+</style>
+</head>
+<body>
+<main class="remote">
+  <div class="top">
+    <span class="led" aria-hidden="true"></span>
+    <span class="clock" id="clock">--:--</span>
+  </div>
+  <nav class="pad" aria-label="Dirette TV">
+    <a class="k" href="https://www.la7play.it/"><span class="btn">7</span><span class="lbl">La7</span></a>
+    <a class="k" href="https://tv8.it/streaming"><span class="btn">8</span><span class="lbl">TV8</span></a>
+    <a class="k" href="https://nove.tv/"><span class="btn">9</span><span class="lbl">Nove</span></a>
+    <a class="k" href="https://tg24.sky.it/diretta"><span class="btn word">Sky</span><span class="lbl">Sky TG24</span></a>
+  </nav>
+</main>
+<script>
+(function(){
+  const el=document.getElementById('clock');
+  const tick=()=>{el.textContent=new Date().toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit'})};
+  tick(); setInterval(tick,15000);
+  if('serviceWorker' in navigator){
+    window.addEventListener('load',()=>{navigator.serviceWorker.register('sw.js').catch(()=>{})});
+  }
+})();
+</script>
+</body>
+</html>
